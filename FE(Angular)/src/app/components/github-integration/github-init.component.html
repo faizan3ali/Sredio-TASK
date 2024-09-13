@@ -1,0 +1,35 @@
+<div class="d-flex justify-content-center mt-4">
+  <mat-expansion-panel class="w-50">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <div class="d-flex align-items-center">
+            <img
+              src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+              alt="GitHub Logo"
+              style="width: 30px; height: 30px; margin-right: 10px;"
+            />
+            GitHub
+            <span *ngIf="isAuthenticated" class="ml-2 success-tick">&#10003;</span>
+          </div>
+          <div *ngIf="isAuthenticated" class="admin-sync">
+            <span>Admin: Last Synced: {{ userData?.connectedAt | date: 'dd/MM/yyyy, h:mm a' }}</span>
+            <span class="sync-type">Sync Type: full</span>
+          </div>
+        </div>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <!-- Centering the Connect button -->
+    <div class="d-flex justify-content-center">
+      <div *ngIf="!isAuthenticated" class="text-center p-3 w-100">
+        <button class="btn btn-primary mb-3 w-50" (click)="login()">Connect</button>
+        <p class="mb-0">Connect Sredio to Github</p>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end" *ngIf="isAuthenticated">
+      <button class="btn btn-primary mt-3" (click)="removeGithub()">Remove</button>
+    </div>
+  </mat-expansion-panel>
+</div>
