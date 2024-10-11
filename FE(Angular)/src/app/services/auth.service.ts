@@ -24,4 +24,16 @@ export class AuthService {
   removeGithubConnection(userId:String): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/remove`, {id:userId}); 
   }
+
+  getOrganizations(userId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/organizations?userId=${userId}`);
+  }
+
+  getRepos(organizationId: string, userId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/repos?organizationId=${organizationId}&userId=${userId}`);
+  }
+
+  getRepoDetails(repoId: string, userId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/repo-details?repoId=${repoId}&userId=${userId}`);
+  }
 }

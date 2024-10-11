@@ -1,0 +1,9 @@
+<div class="ag-theme-alpine" style="height: 300px; width: 100%;" *ngIf="userData.length>0" >
+    <ag-grid-angular
+      style="width: 100%; height: 100%;"
+      class="ag-theme-alpine"
+      [rowData]="userData"
+      [columnDefs]="columnDefs"
+      (gridReady)="onGridReady($event)"
+    ></ag-grid-angular>
+  </div>

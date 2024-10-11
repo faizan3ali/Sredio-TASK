@@ -4,7 +4,7 @@ const axios = require("axios");
 
 
 exports.githubLogin = passport.authenticate("github", {
-  scope: ["user:email"],
+  scope: ["read:org", "repo", "user", "user:email"],
 });
 
 exports.githubCallback = (req, res, next) => {

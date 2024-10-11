@@ -4,6 +4,9 @@ const dotenv = require("dotenv");
 const passport = require("passport");
 const session = require("express-session");
 const authRoutes = require("./routes/authRoutes");
+const githubRoutes = require("./routes/githubRoutes");
+
+
 const cors = require("cors");
 require("./helpers/passportConfig");
 require('./helpers/passportConfig'); // Adjust the path as necessary
@@ -43,7 +46,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRoutes);
-
+app.use("/github", githubRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   {process.env.GITHUB_CLIENT_ID}

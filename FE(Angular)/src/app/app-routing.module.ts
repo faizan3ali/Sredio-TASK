@@ -6,7 +6,6 @@ import { GitHubInitComponent } from './components/github-integration/github-init
 const routes: Routes = [
   { path: '', component: GitHubInitComponent },
 ];
-
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
