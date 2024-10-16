@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const organizationSchema = new mongoose.Schema({
-  githubId: String,  // GitHub organization ID
-  login: String,     // Organization login name
-  userId: String,    // ID of the associated user
-  repos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Repo' }] // Repos linked to this organization
+  githubId: String,  
+  login: String,    
+  userId: String,  
+  repos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Repo' }] 
 });
 
 const Organization = mongoose.model('Organization', organizationSchema);

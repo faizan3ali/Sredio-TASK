@@ -22,14 +22,9 @@ export class UserStatsComponent implements OnChanges  {
   ngOnChanges(changes: SimpleChanges) {
     console.log("ngOnChanges triggered with changes: ", changes);
     if (changes['userData'] && changes['userData'].currentValue !== changes['userData'].previousValue) {
-      console.log("userData changed:", this.userData);
-
-      // If gridApi is set, update the grid data
       if (this.gridApi) {
         this.gridApi.setRowData(this.userData);
       }
-
-      // Manually trigger change detection if necessary
       this.cdr.detectChanges();
     }
   }
@@ -39,7 +34,7 @@ export class UserStatsComponent implements OnChanges  {
     console.log("Grid is ready with initial userData:", this.userData);
 
     if (this.userData.length > 0) {
-      this.gridApi.setRowData(this.userData);  // Initialize the grid data
+      this.gridApi.setRowData(this.userData); 
     }
   }
 }

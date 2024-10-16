@@ -105,15 +105,15 @@ export class GitHubInitComponent implements OnInit {
 
   // Triggered when a row is selected
   onCellValueChanged(event: any) {
-    const selectedNodes = this.gridApi.getSelectedNodes();  // Get selected nodes
-    const selectedRepos = selectedNodes.map((node) => node.data.githubId);  // Extract repo IDs
+    const selectedNodes = this.gridApi.getSelectedNodes();  
+    const selectedRepos = selectedNodes.map((node) => node.data.githubId);  
 
     if (selectedRepos.length > 0) {
-      this.fetchRepoDetailsBatch(selectedRepos);  // Send batch of repo IDs to fetch their details
+      this.fetchRepoDetailsBatch(selectedRepos);  
     }
   }
 
-  // Fetch details for all selected repositories
+
   fetchRepoDetailsBatch(selectedRepoIds: string[]) {
     this.loading = true;
     this.http

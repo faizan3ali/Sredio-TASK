@@ -17,8 +17,6 @@ exports.githubCallback = (req, res, next) => {
       if (loginErr) {
         return res.redirect(`${process.env.FRONTEND_URL}?status=error`);
       }
-
-      // Use template literal correctly
       return res.redirect(`${process.env.FRONTEND_URL}?id=${user.id}`);
     });
   })(req, res, next);
