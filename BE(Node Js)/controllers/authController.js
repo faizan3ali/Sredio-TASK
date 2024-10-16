@@ -2,6 +2,9 @@ const passport = require("passport");
 const User = require("../models/userModel");
 const axios = require("axios");
 
+// Helper to handle redirect with status
+const redirectWithStatus = (res, status, userId = "") =>
+  res.redirect(`${process.env.FRONTEND_URL}?status=${status}${userId ? `&id=${userId}` : ""}`);
 
 exports.githubLogin = passport.authenticate("github", {
   scope: ["read:org", "repo", "user", "user:email"],
@@ -10,14 +13,14 @@ exports.githubLogin = passport.authenticate("github", {
 exports.githubCallback = (req, res, next) => {
   passport.authenticate("github", (err, user) => {
     if (err || !user) {
-      return res.redirect(`${process.env.FRONTEND_URL}?status=error`);
+      return redirectWithStatus(res, "error");
     }
 
     req.logIn(user, (loginErr) => {
       if (loginErr) {
-        return res.redirect(`${process.env.FRONTEND_URL}?status=error`);
+        return redirectWithStatus(res, "error");
       }
-      return res.redirect(`${process.env.FRONTEND_URL}?id=${user.id}`);
+      return redirectWithStatus(res, "success", user.id);
     });
   })(req, res, next);
 };
@@ -27,7 +30,6 @@ exports.getAuthStatus = async (req, res) => {
 
   try {
     const user = await User.findById(id);
-    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -43,53 +45,47 @@ exports.getAuthStatus = async (req, res) => {
       },
     });
   } catch (err) {
-    return res.status(500).json({ message: "Verification failed", error: err });
+    console.error("Error fetching auth status:", err.message);
+    return res.status(500).json({ message: "Verification failed", error: err.message });
   }
 };
 
 exports.logout = (req, res) => {
-  req.logout();
-  res.status(200).json({ message: "Logged out" });
+  req.logout((err) => {
+    if (err) {
+      console.error("Error during logout:", err.message);
+      return res.status(500).json({ message: "Logout failed", error: err.message });
+    }
+    return res.status(200).json({ message: "Logged out successfully" });
+  });
 };
 
 exports.removeUserAndRevokeGithub = async (req, res) => {
-  const userId = req.body.id;
+  const { id: userId } = req.body;
 
   try {
-    console.log(userId);
     const user = await User.findById(userId);
-    console.log(user);
     if (!user || !user.githubId) {
       return res
         .status(400)
         .json({ message: "User not found or not connected with GitHub" });
     }
 
-    const clientId = process.env.GITHUB_CLIENT_ID;
-    const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+    const { GITHUB_CLIENT_ID: clientId, GITHUB_CLIENT_SECRET: clientSecret } = process.env;
     const revokeUrl = `https://api.github.com/applications/${clientId}/token`;
 
-    await axios({
-      method: "delete",
-      url: revokeUrl,
-      auth: {
-        username: clientId,
-        password: clientSecret,
-      },
-      data: {
-        access_token: user.accessToken,
-      },
+    // Revoke GitHub access token
+    await axios.delete(revokeUrl, {
+      auth: { username: clientId, password: clientSecret },
+      data: { access_token: user.accessToken },
     });
 
+    // Remove user from the database
     await User.findByIdAndDelete(userId);
 
-    return res
-      .status(200)
-      .json({ message: "User removed and GitHub token revoked" });
+    return res.status(200).json({ message: "User removed and GitHub token revoked" });
   } catch (err) {
-    console.error("Error removing user and revoking GitHub token:", err);
-    return res
-      .status(500)
-      .json({ message: "Failed to remove user", error: err });
+    console.error("Error removing user and revoking GitHub token:", err.message);
+    return res.status(500).json({ message: "Failed to remove user", error: err.message });
   }
 };
